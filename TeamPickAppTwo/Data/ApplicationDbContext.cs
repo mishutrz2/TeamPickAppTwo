@@ -19,6 +19,10 @@ namespace TeamPickAppTwo.Data
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<List>()
+                .HasIndex(l => l.Name)
+                .IsUnique(); // This enforces the unique constraint at the database level
+
             // many-to-many relationship USERS and LISTS
             modelBuilder.Entity<UserList>().HasKey(ul => new
             {
