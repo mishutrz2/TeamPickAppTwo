@@ -14,5 +14,9 @@ namespace TeamPickAppTwo.Data.ViewSql
         public PreferredPosition PreferredPosition { get; set; }
 
         public ICollection<UserList> UserLists { get; set; } = new List<UserList>();
+
+        public ICollection<UserTeam> UserTeams { get; set; } = new List<UserTeam>();
+
+        public ICollection<MatchDay> MatchDays { get; set; } = new List<MatchDay>();
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamPickAppTwo.Data;
 
@@ -11,9 +12,11 @@ using TeamPickAppTwo.Data;
 namespace TeamPickAppTwo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240912201257_AddedStructureToDb")]
+    partial class AddedStructureToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace TeamPickAppTwo.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ApplicationUserMatchDay", b =>
-                {
-                    b.Property<Guid>("MatchDaysMatchDayId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PlayersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("MatchDaysMatchDayId", "PlayersId");
-
-                    b.HasIndex("PlayersId");
-
-                    b.ToTable("MatchDayPlayers", (string)null);
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -197,6 +185,9 @@ namespace TeamPickAppTwo.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<Guid?>("MatchDayId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
 
@@ -234,6 +225,8 @@ namespace TeamPickAppTwo.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("MatchDayId");
 
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
@@ -356,21 +349,6 @@ namespace TeamPickAppTwo.Migrations
                     b.ToTable("UserTeams");
                 });
 
-            modelBuilder.Entity("ApplicationUserMatchDay", b =>
-                {
-                    b.HasOne("TeamPickAppTwo.Data.ViewSql.MatchDay", null)
-                        .WithMany()
-                        .HasForeignKey("MatchDaysMatchDayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TeamPickAppTwo.Data.ViewSql.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("PlayersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", null)
@@ -420,6 +398,13 @@ namespace TeamPickAppTwo.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("TeamPickAppTwo.Data.ViewSql.ApplicationUser", b =>
+                {
+                    b.HasOne("TeamPickAppTwo.Data.ViewSql.MatchDay", null)
+                        .WithMany("Players")
+                        .HasForeignKey("MatchDayId");
                 });
 
             modelBuilder.Entity("TeamPickAppTwo.Data.ViewSql.MatchDay", b =>
@@ -507,6 +492,8 @@ namespace TeamPickAppTwo.Migrations
             modelBuilder.Entity("TeamPickAppTwo.Data.ViewSql.MatchDay", b =>
                 {
                     b.Navigation("MatchDayTeams");
+
+                    b.Navigation("Players");
                 });
 
             modelBuilder.Entity("TeamPickAppTwo.Data.ViewSql.Team", b =>

@@ -9,5 +9,7 @@
         public string? Location { get; set; }
 
         public ICollection<UserList> UserLists { get; set; } = new List<UserList>();
+
+        public virtual ICollection<MatchDay> MatchDays { get; set; } = new List<MatchDay>();
     }
 }
