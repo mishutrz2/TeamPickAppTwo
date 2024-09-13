@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 using TeamPickAppTwo.Data.ViewSql;
 
 namespace TeamPickAppTwo.Data
@@ -11,6 +12,7 @@ namespace TeamPickAppTwo.Data
         public DbSet<List> Lists { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<MatchDay> MatchDays { get; set; }
+        public DbSet<MatchDayTeamPerformanceDetails> MatchDayTeamPerformanceDetails { get; set; }
         public DbSet<UserList> UserLists { get; set; }
         public DbSet<UserTeam> UserTeams { get; set; }
         public DbSet<MatchDayTeam> MatchDayTeams{ get; set; }
@@ -80,6 +82,15 @@ namespace TeamPickAppTwo.Data
                 .WithMany(m => m.Players)
                 .UsingEntity(j => j.ToTable("MatchDayPlayers")); // Optional: specify a custom junction table name
 
+            // one-to-one relationship between MATCHDAYTEAM and MATCHDAYTEAMPERFORMANCEDETAILS
+            modelBuilder.Entity<MatchDayTeamPerformanceDetails>()
+                .HasKey(p => new { p.MatchDayId, p.TeamId }); // Match the composite key
+
+            modelBuilder.Entity<MatchDayTeam>()
+                .HasOne(m => m.MatchDayTeamPerformanceDetails)
+                .WithOne(p => p.MatchDayTeam)
+                .HasForeignKey<MatchDayTeamPerformanceDetails>(p => new { p.MatchDayId, p.TeamId }) // Composite foreign key
+                .IsRequired(); // Enforce required relationship
         }
     }
 }
